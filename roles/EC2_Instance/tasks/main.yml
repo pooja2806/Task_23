@@ -1,0 +1,45 @@
+- 
+   name: "Launch EC2 for Master"
+   ec2:
+
+          key_name: newansi
+          region: ap-south-1
+          instance_type: t2.micro
+          image: ami-0a9d27a9f4f5c0efc
+          group: EC2
+          vpc_subnet_id: subnet-6d590e21
+          assign_public_ip: yes
+          count: 1
+          aws_access_key: "{{accesskey}}"
+          aws_secret_key: "{{secretkey}}"
+          instance_tags: {"Name":"K8S_Master"}
+         
+  
+-   name: "Lauching EC2 For Worker"  
+    ec2:
+          key_name: newansi
+          region: ap-south-1
+          instance_type: t2.micro
+          image: ami-0a9d27a9f4f5c0efc
+          group: EC2
+          vpc_subnet_id: subnet-6d590e21
+          assign_public_ip: yes
+          count: 2
+          aws_access_key: "{{accesskey}}"
+          aws_secret_key: "{{secretkey}}"
+          instance_tags: {"Name":"K8S_Worker"}
+       
+   
+ 
+   
+
+
+ 
+
+
+
+
+
+
+
+

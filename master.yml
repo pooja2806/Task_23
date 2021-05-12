@@ -1,0 +1,20 @@
+- hosts: Master
+  roles:
+  - K8S_Master_Node
+  vars_files:
+  - token.yml
+
+- hosts: Worker
+  roles:
+  - K8S_Worker_Node
+  vars_files:
+  - token.yml
+
+
+#-----------For Launching EC2 Instance-----------------
+# - hosts: LocalHost
+  #  roles:
+          # - EC2_Instance             
+    # vars_files:
+          # - newkeys.yml
+         

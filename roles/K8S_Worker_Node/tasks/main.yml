@@ -1,0 +1,71 @@
+- name: Installing Docker
+  package:
+        name: docker
+        state: present
+      
+
+- name: "Start Docker"
+  service:
+        name: docker
+        state: started
+
+- name: "Enable Docker"
+  service:
+          name: docker
+          enabled: yes
+
+- name: "Repository For Kubernetes"
+  copy:
+          dest: "/etc/yum.repos.d/kubernetes.repo"
+          src: "/etc/yum.repos.d/kubernetes.repo"
+
+
+- name: "Install Kubeadm"
+  shell: "yum install kubeadm --disableexcludes=kubernetes -y"
+
+- name: "Install iproute-tc"
+  package:
+          name: iproute-tc
+          state: present
+
+- name: "config file for K8S"
+  copy:
+          dest: /etc/sysctl.d/k8s.conf
+          content: |
+                  net.bridge.bridge-nf-call-ip6tables=1
+                  net.bridge.bridge-nf-call-iptables=1
+
+
+- name: "Restart sysctl"
+  shell: "sysctl --system"
+
+- name: "Enable Kubelet"
+  shell: "systemctl enable kubelet --now"
+  changed_when: false
+
+- name: "Pull Images"
+  shell: "kubeadm config images pull"
+
+- name: "Copy daemon.json File"
+  copy:
+        dest: "/etc/docker/daemon.json"
+        src: "/root/daemon.json"
+
+- name: "Restart Docker"
+  service:
+        name: docker
+        state: restarted
+        enabled: yes
+
+
+- name: Copy Token to Worker Node
+  copy: src={{ token_file }} dest=join_token
+
+- name: "Join worker node with master"
+  shell: "`grep -i 'kubeadm join' join_token`"
+  
+  
+
+
+
+
