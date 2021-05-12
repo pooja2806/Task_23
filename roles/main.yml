@@ -1,0 +1,44 @@
+- name: "Launching Wordpress"
+  shell: "kubectl run wpnew --image=wordpress:5.1.1-php7.3-apache"
+  register: WP
+  become: yes
+- debug:
+    var: "WP.stdout_lines"
+
+
+- name: "Launching MySQL"
+  shell: "kubectl run dbnew --image=mysql:5.7 --env=MYSQL_ROOT_PASSWORD=pj2210 --env=MYSQL_DATABASE=New_DB --env=MYSQL_USER=pooja --env=MYSQL_PASSWORD=pj2210"
+  register: MySQL
+  become: yes 
+
+
+- name: "Exposing Wordpress"
+  shell: "kubectl expose pods wpnew --type=NodePort --port=80"
+  register: expose
+  ignore_errors: yes
+  become: yes
+
+- debug:
+    var: "expose.stdout_lines"
+
+- name: "get service"
+  shell: "kubectl get svc"
+  register: svc
+  become: yes
+
+- debug:
+    var: "svc.stdout_lines"
+
+- name: "Pause Playbook"
+  pause:
+    seconds: 60
+  become: yes
+
+- name: "Getting database IP"
+  shell: "kubectl get pods -o wide"
+  register: DB_IP
+  become: yes
+
+- debug:
+    var: "DB_IP.stdout_lines"
+    
